@@ -1,0 +1,29 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35931.197 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebViewApplication", "WebViewApplication\WebViewApplication.csproj", "{7BEB0310-11BB-4D2E-8573-EA9FE70D9BE7}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "WebView", "WebView\WebView.vdproj", "{E32D287F-CB55-D006-6728-A3F1C32CDC22}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7BEB0310-11BB-4D2E-8573-EA9FE70D9BE7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7BEB0310-11BB-4D2E-8573-EA9FE70D9BE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7BEB0310-11BB-4D2E-8573-EA9FE70D9BE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7BEB0310-11BB-4D2E-8573-EA9FE70D9BE7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E32D287F-CB55-D006-6728-A3F1C32CDC22}.Debug|Any CPU.ActiveCfg = Debug
+		{E32D287F-CB55-D006-6728-A3F1C32CDC22}.Release|Any CPU.ActiveCfg = Release
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C5DB5B13-A264-42B4-8FC3-F938BD0AA44A}
+	EndGlobalSection
+EndGlobal

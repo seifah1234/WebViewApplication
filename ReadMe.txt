@@ -1,3 +1,5 @@
+(The test app is WebView.msi)
+
 1- Install Packages:
 
 	A- Go to Extensions Tab:
@@ -41,3 +43,10 @@
 
 	- Right-click the WebView project
 	- change the 'title', 'ProductName'
+
+6- Make an EXE 
+	- Right-click the WebView project
+	- Click Build 
+	- Right-click the WebView project again 
+	- Open file location 
+	- go to Debug file your file there

@@ -1,21 +1,25 @@
 ﻿using Microsoft.Web.WebView2.Core;
 using System.Diagnostics;
 using System.IO;
-using System.Management;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
 namespace WebViewApplication
 {
     public partial class MainWindow : Window
     {
-        private const int WDA_NONE = 0;
         private const int WDA_MONITOR = 1;
         private const int WDA_EXCLUDEFROMCAPTURE = 11;
-
+        private bool _isManualFullscreen = false;
+        [DllImport("user32.dll")]
+        private static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
         [DllImport("user32.dll")]
         private static extern bool SetWindowDisplayAffinity(IntPtr hWnd, int dwAffinity);
+
 
         [DllImport("user32.dll")]
         static extern IntPtr GetActiveWindow();
@@ -36,7 +40,6 @@ namespace WebViewApplication
         public MainWindow()
         {
             InitializeComponent();
-
             this.Loaded += MainWindow_Loaded;
         }
 
@@ -45,8 +48,8 @@ namespace WebViewApplication
             try
             {
                 string userDataFolder = Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                    "Original\\WebView\\WebView2Data");
+                                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                                    "Original\\WebView\\WebView2Data");
 
                 if (!Directory.Exists(userDataFolder))
                 {
@@ -57,35 +60,29 @@ namespace WebViewApplication
                     userDataFolder: userDataFolder);
 
                 SetWindowDisplayAffinity(GetActiveWindow(), WDA_MONITOR);
-
                 await webView.EnsureCoreWebView2Async(env);
 
                 webView.CoreWebView2InitializationCompleted += WebView_CoreWebView2InitializationCompleted;
-
-                // Replace with your desired URL
-                webView.Source = new Uri("https://youtube.com");
+                webView.Source = new Uri("https://hany-al-nashar-disktop-web.vercel.app");
 
                 recorderTimer = new DispatcherTimer();
                 recorderTimer.Interval = TimeSpan.FromSeconds(5);
                 recorderTimer.Tick += SecurityTimer_Tick;
                 recorderTimer.Start();
-
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Initialization failed.\n\nError: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                Application.Current.Shutdown();
+                MessageBox.Show($"Initialization failed: {ex.Message}");
             }
         }
 
-        private void WebView_CoreWebView2InitializationCompleted(object sender, CoreWebView2InitializationCompletedEventArgs e)
+        private async void WebView_CoreWebView2InitializationCompleted(object sender, CoreWebView2InitializationCompletedEventArgs e)
         {
             if (e.IsSuccess)
             {
                 try
                 {
                     IntPtr hwnd = ((System.Windows.Interop.HwndSource)PresentationSource.FromVisual(webView)).Handle;
-
                     if (Environment.OSVersion.Version.Build >= 19041)
                     {
                         SetWindowDisplayAffinity(hwnd, WDA_EXCLUDEFROMCAPTURE);
@@ -99,6 +96,7 @@ namespace WebViewApplication
                 {
                     MessageBox.Show($"Failed to set display affinity.\n\nError: {ex.Message}");
                 }
+
             }
             else
             {
@@ -106,6 +104,22 @@ namespace WebViewApplication
             }
         }
 
+        private void EnterFullscreen()
+        {
+
+            this.WindowStyle = WindowStyle.None;
+            this.Topmost = true;
+
+        }
+
+        private void ExitFullscreen()
+        {
+
+            this.WindowStyle = WindowStyle.SingleBorderWindow;
+            this.Topmost = false;
+        }
+
+        
         private void SecurityTimer_Tick(object sender, EventArgs e)
         {
             var processes = Process.GetProcesses();
@@ -123,7 +137,25 @@ namespace WebViewApplication
                 }
                 catch
                 {
+                    // Ignore process access errors
                 }
+            }
+        }
+
+
+        private void Window_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if(e.Key == System.Windows.Input.Key.F11)
+            {
+                if (_isManualFullscreen)
+                {
+                    ExitFullscreen();
+                }
+                else
+                {
+                    EnterFullscreen();
+                }
+                _isManualFullscreen = !_isManualFullscreen;
             }
         }
 

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+
+	<!-- Define these variables for your project -->
+	<?define ProductName = "WebViewApplication" ?>
+	<?define Manufacturer = "Original" ?>
+	<?define Version = "1.0.0.0" ?>
+	<?define UpgradeCode = "dc04f8eb-95b9-4e8a-80f1-2ff97714aaf1" ?>
+	<?define MainExe = "WebViewApplication.exe" ?>
+	<?define MainExePath = "D:\Work\DataTransfer\WebViewApplication\WebViewApplication\bin\Debug\net8.0-windows\WebViewApplication.exe" ?>
+	<?define WebViewApplication.TargetPath = "bin\Release\net48\WebViewApplication.msi" ?>
+
+
+	<Product Id="*"
+			 Name="Hany El-Nashar"
+			 Language="1033"
+			 Version="$(var.Version)"
+			 Manufacturer="$(var.Manufacturer)"
+			 UpgradeCode="$(var.UpgradeCode)">
+
+		<Package InstallerVersion="500"
+				 Compressed="yes"
+				 InstallScope="perMachine"
+				 Comments="$(var.ProductName) installer"/>
+
+		<MajorUpgrade DowngradeErrorMessage="A newer version is already installed."/>
+		<MediaTemplate EmbedCab="yes"/>
+
+		<Icon Id="appicon.ico" SourceFile="icon.ico"/>
+		<Property Id="ARPPRODUCTICON" Value="appicon.ico"/>
+
+		<!-- Registry searches -->
+		<Property Id="NETFRAMEWORK40FULL">
+			<RegistrySearch Id="NetFrameworkCheck"
+							Root="HKLM"
+							Key="SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full"
+							Name="Release"
+							Type="raw"/>
+		</Property>
+
+		<Property Id="WV2I">
+			<RegistrySearch Id="WebView2Check"
+							Root="HKLM"
+							Key="SOFTWARE\WOW6432Node\Microsoft\EdgeUpdate\Clients\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}"
+							Name="pv"
+							Type="raw"/>
+		</Property>
+
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="ProgramFilesFolder">
+				<Directory Id="INSTALLFOLDER" Name="$(var.ProductName)"/>
+			</Directory>
+			<Directory Id="ProgramMenuFolder">
+				<Directory Id="ApplicationProgramsFolder" Name="$(var.ProductName)"/>
+			</Directory>
+		</Directory>
+
+		<Feature Id="ProductFeature" Title="$(var.ProductName)" Level="1">
+			<ComponentGroupRef Id="ProductComponents"/>
+			<ComponentGroupRef Id="ApplicationShortcuts"/>
+		</Feature>
+
+	</Product>
+
+	<Fragment>
+		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+			<Component Id="MainExecutable" Guid="*">
+				<File Id="MainExe" Name="$(var.MainExe)" Source="$(var.MainExePath)" KeyPath="yes"/>
+			</Component>
+		</ComponentGroup>
+
+		<ComponentGroup Id="ApplicationShortcuts" Directory="ApplicationProgramsFolder">
+			<Component Id="ApplicationShortcut" Guid="*">
+				<Shortcut Id="StartMenuShortcut"
+						  Name="$(var.ProductName)"
+						  Description="$(var.ProductName) Application"
+						  Target="[INSTALLFOLDER]$(var.MainExe)"
+						  WorkingDirectory="INSTALLFOLDER"
+						  Icon="appicon.ico"/>
+				<RemoveFolder Id="RemoveAppFolder" On="uninstall"/>
+				<RegistryValue Root="HKCU"
+							   Key="Software\$(var.Manufacturer)\$(var.ProductName)"
+							   Name="Installed"
+							   Type="integer"
+							   Value="1"
+							   KeyPath="yes"/>
+			</Component>
+		</ComponentGroup>
+	</Fragment>
+
+</Wix>
